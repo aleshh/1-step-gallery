@@ -36,22 +36,33 @@
 <h1>Photos</h1>
 
 <div class="wrapper">
+
 <?php
 
 $dir  = '.';
-$extensions = ["jpg", "JPG"];
+$extensions = ["jpg", "jpeg", "gif", "png"]; //case insensitive
 
 $files1 = scandir($dir, 1);
 $files2 = [];
 
+// for testing
+// $files1 = ["file1-jpeg.jpeg", "file2-JPEG.JPEG", "file3-jpg.jpg", "file4-JPG.JPG", "file5-gif.gif", "file.6.multiple-periods.jpg", "file7 space.jpg", "file8-png.png", "FAIL.doc", "FAIL.docjpg" ];
+
+
+foreach ($extensions as $key => $value) {
+  $extensions[$key] = strtoupper($value);
+}
+
 foreach ($files1 as $key => $value) {
-  if (in_array(substr($value, -3), $extensions)) {
+//  if (in_array(substr($value, -3), $extensions)) {
+  if (in_array(strtoupper(pathinfo($value)['extension']), $extensions)) {
     $files2[] = $value;
-    echo '<img src="'.$value.'" class="thumbnail zoomTarget" data-targetsize="0.7" data-closeclick="true" />';
+    echo "<img src='".$value."' class='thumbnail zoomTarget' data-targetsize='0.7' data-closeclick='true' />\n\n";
   }
 }
 
  ?>
+
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
