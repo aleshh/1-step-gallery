@@ -27,31 +27,41 @@
   ?>
   <title><?php echo $title; ?></title>
   <style>
+    html {
+      overflow-y: scroll;
+      height: 102%;
+    }
     body {
       background-color: silver;
       margin: 0;
       padding: 0;
-    }
-    h1 {
       font-family: Helvetica, sans-serif;
+    }
+    header {
       color:white;
       margin: 0;
-      padding: 10px;
+      padding: 10px 20px;
       background-color: black;
-      width: 100%;
+    }
+    h1 {
+      margin: 0;
+      display: inline-block;
+    }
+    .size-adjust {
+      float:right;
+      /*margin-right: 20px;*/
+      margin-top: 10px;
     }
     p {
-      font-family: Helvetical, sans-serif;
       margin-left: 10px;
-    }
-    .lb-details {
-      font-family: Helvetical, sans-serif;
+      font-size: 12px;
+      margin-bottom: 10px;
     }
     .wrapper {
-      margin-right: 10px;
+      /*margin-right: 10px;*/
     }
     .thumbnail {
-      max-width: 250px;
+      width: 250px;
       height: auto;
       margin-left: 10px;
       margin-top: 10px;
@@ -66,7 +76,10 @@
   </style>
 </head>
 <body>
-  <h1><?php echo $title; ?></h1>
+  <header>
+    <h1><?php echo $title; ?></h1>
+    <input id="size-adjust" class="size-adjust" type="range" min="80" max="1000" value="250" />
+  </header>
 
   <div class="wrapper">
 
@@ -88,12 +101,21 @@
 
     ?>
 
-    <p><strong>1 Step Gallery</strong> by <a href="http://alesh.com">Alesh Houdek</a>. Uses <a href="http://lokeshdhakar.com/projects/lightbox2/">Lightbox2</a>.</p>
+    <p><strong>1-Step Gallery</strong> by <a href="http://alesh.com">Alesh Houdek</a>. Uses <a href="http://lokeshdhakar.com/projects/lightbox2/">Lightbox2</a>.</p>
 
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox-plus-jquery.min.js"></script>
 
+  <script>
+
+    $('#size-adjust').attr("max", $(window).width() - 40);
+
+    $('#size-adjust').on("chnage mousemove", function() {
+      $('.thumbnail').css("width", $(this).val());
+    });
+
+  </script>
 
 </body>
 </html>
