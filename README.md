@@ -6,9 +6,9 @@ Upload index.php into a directory of images on a web server and boom: instant ga
 * Title uses name of directory, or provide one in the file.
 * Uses [Lightbox2](http://lokeshdhakar.com/projects/lightbox2/).
 
-![Screenshot](sceenshot.php?raw=true)
+![Screenshot](https://raw.githubusercontent.com/aleshh/1-step-gallery/master/screenshot.png?raw=true)
 
-h2. To-do
+## To-do
 
 * Test on mobile.
 * Test when other directory specified.
