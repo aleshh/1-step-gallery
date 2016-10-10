@@ -11,21 +11,30 @@
     // Alesh Houdek, http://alesh.com
     //
     // Include this file in a directory of images and boom: instant gallery.
-    // Some optional configuration
+    //
+    // Some optional configuration:
 
-    // Title to be displayed
-    $title = "Photos";
-
-    // Directory to process. '.' means current.
-    $directory  = '.';
+    // Title to be displayed. Will use directory name if left blank.
+    $title = "";
 
     // Allowed extensions. Case insensitive.
     $extensions = ["jpg", "jpeg", "gif", "png"];
 
+    // Directory to process. '.' means current. (This is expreimental.)
+    $directory  = '.';
+
     /////////////////////////////////////////////////////////////////////////////
+
+    if ($title == "") {
+      $url = explode("/", $_SERVER['REQUEST_URI']);
+      $title = $url[count($url)-2];
+      $remove = array("-", "_");
+      $title = str_replace($remove, " ", $title);
+    }
 
   ?>
   <title><?php echo $title; ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <style>
     html {
       overflow-y: scroll;
@@ -38,27 +47,36 @@
       font-family: Helvetica, sans-serif;
     }
     header {
+      position: fixed;
+      height: 20px;
+      width: 100%;
       color:white;
       margin: 0;
-      padding: 10px 20px;
-      background-color: black;
+      padding: 10px 20px 12px;
+      background-color: #444;
     }
     h1 {
       margin: 0;
       display: inline-block;
+      font-size: 20px;
+      font-weight: normal;
     }
     .size-adjust {
       float:right;
-      /*margin-right: 20px;*/
-      margin-top: 10px;
+      margin-right: 40px;
+      margin-top: 4px;
     }
     p {
       margin-left: 10px;
       font-size: 12px;
       margin-bottom: 10px;
     }
+    a {
+      color: black;
+    }
     .wrapper {
       /*margin-right: 10px;*/
+      padding-top: 50px;
     }
     .thumbnail {
       width: 250px;
@@ -78,7 +96,7 @@
 <body>
   <header>
     <h1><?php echo $title; ?></h1>
-    <input id="size-adjust" class="size-adjust" type="range" min="80" max="1000" value="250" />
+    <input id="size-adjust" class="size-adjust" type="range" min="80" max="1000" value="250" title="Drag to adjust size"/>
   </header>
 
   <div class="wrapper">
