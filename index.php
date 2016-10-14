@@ -61,10 +61,29 @@
       font-size: 20px;
       font-weight: normal;
     }
-    .size-adjust {
+    .size-adjust-wrapper {
       float:right;
       margin-right: 40px;
       margin-top: 4px;
+    }
+    .size-adjust {
+      float: left;
+      margin: 0 8px;
+    }
+    .small-rect, .large-rect {
+      /*display:inline-block;*/
+      float:left;
+      border: 1px solid white;
+      background-color: #888;
+      width: 10px;
+      height: 8px;
+      margin-top: 3px;
+    }
+    .large-rect {
+      width: 15px;
+      height: 12px;
+      margin-top: 1px;
+
     }
     a {
       color: black;
@@ -105,7 +124,11 @@
 <body>
   <header>
     <h1><?php echo $title; ?></h1>
-    <input id="size-adjust" class="size-adjust" type="range" min="80" max="1000" value="250" title="Drag to adjust size"/>
+    <div class="size-adjust-wrapper">
+      <div class="icon small-rect"></div>
+      <input id="size-adjust" class="size-adjust" type="range" min="80" max="1000" value="250" title="Drag to adjust size"/>
+      <div class="icon large-rect"></div>
+    </div>
   </header>
 
   <div class="wrapper">
