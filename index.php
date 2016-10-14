@@ -20,8 +20,8 @@
     // Allowed extensions. Case insensitive.
     $extensions = ["jpg", "jpeg", "gif", "png"];
 
-    // Directory to process. '.' means current. (This is expreimental.)
-    $directory  = '.';
+    // Show filenames
+    $show_file_names = FALSE;
 
     /////////////////////////////////////////////////////////////////////////////
 
@@ -66,26 +66,35 @@
       margin-right: 40px;
       margin-top: 4px;
     }
-    p {
-      margin-left: 10px;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
     a {
       color: black;
     }
     .wrapper {
-      /*margin-right: 10px;*/
       padding-top: 50px;
+    }
+    .border {
+      display: inline-block;
+      margin-left: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: white;
     }
     .thumbnail {
       width: 250px;
       height: auto;
+    }
+    .caption {
+      width: 250px;
+      font-size: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin: 2px 0 -2px;
+    }
+    .credit {
       margin-left: 10px;
-      margin-top: 10px;
-      padding: 10px;
-      /*border: 1px solid black;*/
-      background-color: white;
+      font-size: 12px;
+      margin-bottom: 10px;
     }
 
     /* lightbox2 css*/
@@ -103,6 +112,9 @@
 
     <?php
 
+      // Directory to process. '.' means current. (This is expreimental.)
+      $directory  = '.';
+
       $files = scandir($directory, 1);
 
       foreach ($extensions as $key => $value) {
@@ -112,14 +124,18 @@
       foreach ($files as $key => $value) {
         if (in_array(strtoupper(pathinfo($value)['extension']), $extensions)) {
           $images[] = $value;
-          // echo "<img src='".$value."' class='thumbnail' />\n\n";
-          echo "<a href='", $value, "' data-lightbox='photos' ><img src='", $value, "' class='thumbnail' /></a>\n\n";
+          echo "<div class='border'><a href='", $value, "' data-lightbox='photos' ><img class='thumbnail' src='", $value, "' /></a>";
+          if ($show_file_names) {
+            echo "<p class='caption'>".$value."</p>";
+          }
+          echo "</div>";
+          // echo "<a href='", $value, "' data-lightbox='photos' ><img src='", $value, "' class='thumbnail' /></a>\n\n";
         }
       }
 
     ?>
 
-    <p><strong>1-Step Gallery</strong> by <a href="http://alesh.com">Alesh Houdek</a>. Uses <a href="http://lokeshdhakar.com/projects/lightbox2/">Lightbox2</a>.</p>
+    <p class="credit"><strong>1-Step Gallery</strong> by <a href="http://alesh.com">Alesh Houdek</a>. Uses <a href="http://lokeshdhakar.com/projects/lightbox2/">Lightbox2</a>.</p>
 
   </div>
 
@@ -127,10 +143,13 @@
 
   <script>
 
+    // on load, set maximum dize of images to window width
     $('#size-adjust').attr("max", $(window).width() - 40);
 
+    // adjust image sizes
     $('#size-adjust').on("chnage mousemove", function() {
       $('.thumbnail').css("width", $(this).val());
+      $('.caption').css("width", $(this).val());
     });
 
   </script>
