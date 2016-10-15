@@ -7,7 +7,7 @@
     /////////////////////////////////////////////////////////////////////////////
 
     // 1-Step Gallery
-    // version .2
+    // version .3
     // Alesh Houdek, http://alesh.com
     //
     // Include this file in a directory of images and boom: instant gallery.
@@ -17,19 +17,31 @@
     // Title to be displayed. Will use directory name if left blank.
     $title = "";
 
-    // Allowed extensions. Case insensitive.
-    $extensions = ["jpg", "jpeg", "gif", "png"];
-
     // Show filenames
     $show_file_names = FALSE;
 
+    // Convert filename to readable caption
+    $convert_filenames = TRUE;
+
+    // Allowed extensions. Case insensitive.
+    $extensions = ["jpg", "jpeg", "gif", "png"];
+
     /////////////////////////////////////////////////////////////////////////////
+
+    function remove_gunk($input) {
+      $remove = array("-", "_");
+      $input = str_replace($remove, " ", $input);
+      $input = ucfirst($input);
+      $period_position = strpos($input, ".");
+      if ($period_position) {
+        $input = substr($input, 0, $period_position);
+      }
+      return $input;
+    }
 
     if ($title == "") {
       $url = explode("/", $_SERVER['REQUEST_URI']);
-      $title = $url[count($url)-2];
-      $remove = array("-", "_");
-      $title = str_replace($remove, " ", $title);
+      $title = remove_gunk($url[count($url)-2]);
     }
 
   ?>
@@ -37,8 +49,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <style>
     html {
-      overflow-y: scroll;
-      height: 102%;
+      height: 102%; /*otherwise the scroll bar will appear/disapear on resize*/
     }
     body {
       background-color: silver;
@@ -71,7 +82,6 @@
       margin: 0 8px;
     }
     .small-rect, .large-rect {
-      /*display:inline-block;*/
       float:left;
       border: 1px solid white;
       background-color: #888;
@@ -83,7 +93,6 @@
       width: 15px;
       height: 12px;
       margin-top: 1px;
-
     }
     a {
       color: black;
@@ -99,6 +108,7 @@
       background-color: white;
     }
     .thumbnail {
+      display: block;
       width: 250px;
       height: auto;
     }
@@ -108,7 +118,7 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      margin: 2px 0 -2px;
+      margin: 6px 0 -2px;
     }
     .credit {
       margin-left: 10px;
@@ -133,9 +143,8 @@
 
   <div class="wrapper">
 
-    <?php
+<?php
 
-      // Directory to process. '.' means current. (This is expreimental.)
       $directory  = '.';
 
       $files = scandir($directory, 1);
@@ -147,12 +156,29 @@
       foreach ($files as $key => $value) {
         if (in_array(strtoupper(pathinfo($value)['extension']), $extensions)) {
           $images[] = $value;
-          echo "<div class='border'><a href='", $value, "' data-lightbox='photos' ><img class='thumbnail' src='", $value, "' /></a>";
+
+          echo "<div class='border'>\n  <a href='", $value, "' data-lightbox='image' ";
+
+          // output title for Lightbox2
           if ($show_file_names) {
-            echo "<p class='caption'>".$value."</p>";
+            if ($convert_filenames) {
+              echo "title='".remove_gunk($value)."'";
+            } else {
+              echo "title='".$value."'";
+            }
           }
-          echo "</div>";
-          // echo "<a href='", $value, "' data-lightbox='photos' ><img src='", $value, "' class='thumbnail' /></a>\n\n";
+
+          echo ">\n    <img class='thumbnail' src='", $value, "' />\n  </a>\n";
+
+          // output title for main view
+          if ($show_file_names) {
+            if ($convert_filenames) {
+              echo "  <p class='caption'>".remove_gunk($value)."</p>\n";
+            } else {
+              echo "  <p class='caption'>".$value."</p>\n";
+            }
+          }
+          echo "</div>\n\n";
         }
       }
 
@@ -174,6 +200,13 @@
       $('.thumbnail').css("width", $(this).val());
       $('.caption').css("width", $(this).val());
     });
+
+    lightbox.option({
+      'alwaysShowNavOnTouchDevices': true,
+      'showImageNumberLabel': false,
+      'fadeDuration': 100,
+      'resizeDuration': 100
+    })
 
   </script>
 
