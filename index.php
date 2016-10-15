@@ -110,13 +110,26 @@
       display: inline-block;
       margin-left: 10px;
       margin-top: 10px;
-      padding: <?php echo $border; ?>px;
-      background-color: white;
+      background-color: silver;
+<?php if ($border >= 2) {
+        echo "padding: ", $border, "px;";
+        echo "background-color: white;";
+      } else {
+        echo "padding: 0;";
+      }
+?>
     }
     .thumbnail {
       display: block;
       width: <?php echo $thumb_start; ?>px;
       height: auto;
+<?php if ($border >= 2) {
+        echo "padding: 0;";
+      } else {
+        echo "padding: ", $border, "px;";
+        echo "background-color: white;";
+      }
+?>
     }
     .caption {
       width: 250px;
