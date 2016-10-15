@@ -15,5 +15,4 @@ Upload [index.php](https://github.com/aleshh/1-step-gallery/blob/master/index.ph
 
 * Test on mobile.
 * Test when other directory specified.
-* Optionally display filenames.
 * Optionally auto-generate a .zip download link for all files.
