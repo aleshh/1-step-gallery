@@ -17,6 +17,9 @@
     // Title to be displayed. Will use directory name if left blank.
     $title = "";
 
+    // Optional message
+    $message = "";
+
     // Show filenames
     $show_file_names = true;
 
@@ -139,6 +142,10 @@
       text-overflow: ellipsis;
       margin: 6px 0 -2px;
     }
+    .message {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
     .credit {
       margin-left: 10px;
       font-size: 12px;
@@ -163,6 +170,10 @@
   <div class="wrapper">
 
 <?php
+
+      if ($message != "") {
+        echo "<p class='message'>", $message, "</p>";
+      }
 
       $directory  = '.';
 
