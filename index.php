@@ -179,37 +179,40 @@
 
       $files = scandir($directory, 1);
 
+      // convert all allowable extensions to uppercase
       foreach ($extensions as $key => $value) {
         $extensions[$key] = strtoupper($value);
       }
 
+      // loop through scanned files
       foreach ($files as $key => $value) {
-        if (in_array(strtoupper(pathinfo($value)['extension']), $extensions)) {
-          $images[] = $value;
+        $extension = pathinfo($value, PATHINFO_EXTENSION);
+          if (in_array(strtoupper($extension), $extensions)) {
+            $images[] = $value;
 
-          echo "<div class='border'>\n  <a href='", $value, "' data-lightbox='image' ";
+            echo "<div class='border'>\n  <a href='", $value, "' data-lightbox='image' ";
 
-          // output title for Lightbox2
-          if ($show_file_names) {
-            if ($convert_filenames) {
-              echo "title='".remove_gunk($value)."'";
-            } else {
-              echo "title='".$value."'";
+            // output title for Lightbox2
+            if ($show_file_names) {
+              if ($convert_filenames) {
+                echo "title='".remove_gunk($value)."'";
+              } else {
+                echo "title='".$value."'";
+              }
             }
-          }
 
-          echo ">\n    <img class='thumbnail' src='", $value, "' />\n  </a>\n";
+            echo ">\n    <img class='thumbnail' src='", $value, "' />\n  </a>\n";
 
-          // output title for main view
-          if ($show_file_names) {
-            if ($convert_filenames) {
-              echo "  <p class='caption'>".remove_gunk($value)."</p>\n";
-            } else {
-              echo "  <p class='caption'>".$value."</p>\n";
+            // output title for main view
+            if ($show_file_names) {
+              if ($convert_filenames) {
+                echo "  <p class='caption'>".remove_gunk($value)."</p>\n";
+              } else {
+                echo "  <p class='caption'>".$value."</p>\n";
+              }
             }
+            echo "</div>\n\n";
           }
-          echo "</div>\n\n";
-        }
       }
 
     ?>
