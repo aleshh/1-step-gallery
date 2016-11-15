@@ -24,7 +24,7 @@
     $show_file_names = true;
 
     // Convert filename to readable caption
-    $convert_filenames = TRUE;
+    $convert_filenames = true;
 
     // Allowed extensions. Case insensitive.
     $extensions = ["jpg", "jpeg", "gif", "png"];
@@ -179,12 +179,16 @@
 
       $files = scandir($directory, 1);
 
+
       // convert all allowable extensions to uppercase
+
       foreach ($extensions as $key => $value) {
         $extensions[$key] = strtoupper($value);
       }
 
+
       // loop through scanned files
+
       foreach ($files as $key => $value) {
         $extension = pathinfo($value, PATHINFO_EXTENSION);
           if (in_array(strtoupper($extension), $extensions)) {
