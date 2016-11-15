@@ -171,13 +171,24 @@
 
 <?php
 
+      class directory_entry {
+        public $name;
+        public $date_modified;
+        public $image;     // boolean
+        public $directory; // boolean
+
+        function __constructor($name, $date_modified, $image, $directory) {
+
+        }
+      }
+
       if ($message != "") {
         echo "<p class='message'>", $message, "</p>";
       }
 
       $directory  = '.';
 
-      $files = scandir($directory, 1);
+      $dir_scan = scandir($directory, 1);
 
 
       // convert all allowable extensions to uppercase
@@ -186,37 +197,48 @@
         $extensions[$key] = strtoupper($value);
       }
 
+      foreach ($dir_scan as $key => $value) {
+        $file = new directory_entry;
+        $file->name = $value;
+        $file->date_modified = filemtime($value);
+
+        $extension = pathinfo($value, PATHINFO_EXTENSION);
+        $file->image = in_array(strtoupper($extension), $extensions);
+
+        $file->directory = is_dir($value);
+        $files[] = $file;
+      }
+      // print_r($files);
+
 
       // loop through scanned files
 
       foreach ($files as $key => $value) {
-        $extension = pathinfo($value, PATHINFO_EXTENSION);
-          if (in_array(strtoupper($extension), $extensions)) {
-            $images[] = $value;
+        if ($value->image) {
 
-            echo "<div class='border'>\n  <a href='", $value, "' data-lightbox='image' ";
+          echo "<div class='border'>\n  <a href='", $value->name, "' data-lightbox='image' ";
 
-            // output title for Lightbox2
-            if ($show_file_names) {
-              if ($convert_filenames) {
-                echo "title='".remove_gunk($value)."'";
-              } else {
-                echo "title='".$value."'";
-              }
+          // output title for Lightbox2
+          if ($show_file_names) {
+            if ($convert_filenames) {
+              echo "title='".remove_gunk($value->name)."'";
+            } else {
+              echo "title='".$value->name."'";
             }
-
-            echo ">\n    <img class='thumbnail' src='", $value, "' />\n  </a>\n";
-
-            // output title for main view
-            if ($show_file_names) {
-              if ($convert_filenames) {
-                echo "  <p class='caption'>".remove_gunk($value)."</p>\n";
-              } else {
-                echo "  <p class='caption'>".$value."</p>\n";
-              }
-            }
-            echo "</div>\n\n";
           }
+
+          echo ">\n    <img class='thumbnail' src='", $value->name, "' />\n  </a>\n";
+
+          // output title for main view
+          if ($show_file_names) {
+            if ($convert_filenames) {
+              echo "  <p class='caption'>".remove_gunk($value->name)."</p>\n";
+            } else {
+              echo "  <p class='caption'>".$value->name."</p>\n";
+            }
+          }
+          echo "</div>\n\n";
+        }
       }
 
     ?>
