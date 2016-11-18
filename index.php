@@ -177,8 +177,16 @@
         public $image;     // boolean
         public $directory; // boolean
 
-        function __constructor($name, $date_modified, $image, $directory) {
+        function __construct($name) {
+          $this->name = $name;
+          $this->date_modified = filemtime($name);
 
+          global $extensions;
+          $extension = pathinfo($name, PATHINFO_EXTENSION);
+
+          $this->image = in_array(strtoupper($extension), $extensions);
+
+          $this->directory = is_dir($name);
         }
       }
 
@@ -197,44 +205,40 @@
         $extensions[$key] = strtoupper($value);
       }
 
+
+
       foreach ($dir_scan as $key => $value) {
-        $file = new directory_entry;
-        $file->name = $value;
-        $file->date_modified = filemtime($value);
 
-        $extension = pathinfo($value, PATHINFO_EXTENSION);
-        $file->image = in_array(strtoupper($extension), $extensions);
+        $files[] = new directory_entry($value, $extensions);
 
-        $file->directory = is_dir($value);
-        $files[] = $file;
       }
       // print_r($files);
 
 
       // loop through scanned files
 
-      foreach ($files as $key => $value) {
-        if ($value->image) {
+      foreach ($files as $file) {
+        if ($file->image) {
 
-          echo "<div class='border'>\n  <a href='", $value->name, "' data-lightbox='image' ";
+          echo "<div class='border'>\n  <a href='", $file->name, "' data-lightbox='image' ";
 
           // output title for Lightbox2
           if ($show_file_names) {
             if ($convert_filenames) {
-              echo "title='".remove_gunk($value->name)."'";
+              echo "title='".remove_gunk($file->name)."'";
             } else {
-              echo "title='".$value->name."'";
+              echo "title='".$file->name."'";
             }
           }
 
-          echo ">\n    <img class='thumbnail' src='", $value->name, "' />\n  </a>\n";
+          echo ">\n    <img class='thumbnail' src='", $file->name, "' />\n  </a>\n";
 
           // output title for main view
           if ($show_file_names) {
             if ($convert_filenames) {
-              echo "  <p class='caption'>".remove_gunk($value->name)."</p>\n";
+              echo "  <p class='caption'>".remove_gunk($file->name)."</p>\n";
             } else {
-              echo "  <p class='caption'>".$value->name."</p>\n";
+              echo "  <p class='caption'>".$file->name."</p>\n";
             }
           }
           echo "</div>\n\n";
