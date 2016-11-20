@@ -7,7 +7,7 @@
     /////////////////////////////////////////////////////////////////////////////
 
     // 1-Step Gallery
-    // version .3
+    // version .4
     // Alesh Houdek, http://alesh.com
     //
     // Include this file in a directory of images and boom: instant gallery.
@@ -109,7 +109,8 @@
     .wrapper {
       padding-top: 50px;
     }
-    .border {
+
+    .folder, .border {
       display: inline-block;
       margin-left: 10px;
       margin-top: 10px;
@@ -122,7 +123,11 @@
       }
 ?>
     }
-    .thumbnail {
+
+    .folder {
+      background-color: #eee;
+    }
+    .thumbnail, .folder a {
       display: block;
       width: <?php echo $thumb_start; ?>px;
       height: auto;
@@ -175,7 +180,7 @@
         public $name;
         public $date_modified;
         public $image;     // boolean
-        public $directory; // boolean
+        public $folder; // boolean
 
         function __construct($name) {
           $this->name = $name;
@@ -186,9 +191,32 @@
 
           $this->image = in_array(strtoupper($extension), $extensions);
 
-          $this->directory = is_dir($name);
+          $this->folder = is_dir($name);
         }
+
+        function title() {
+          global $convert_filenames;
+
+          if ($convert_filenames) {
+            return remove_gunk($this->name);
+          } else {
+            return $this->name;
+          }
+        }
+
+        function folder_image() {
+          return '
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 302 202">
+              <g fill="none">
+                <path d="M0 82.5L0 8C0 3.6 3.6 0 8 0L98 0C102.4 0 106 3.6 106 8L106 23 294 23C298.4 23 302 26.6 302 31L302 194C302 198.4 298.4 202 294 202L8 202C3.6 202 0 198.4 0 194L0 82.5Z" style="fill:#AAA"/>
+              </g>
+            </svg>';
+        }
+
       }
+
+
+      // setup
 
       if ($message != "") {
         echo "<p class='message'>", $message, "</p>";
@@ -206,43 +234,60 @@
       }
 
 
+      // create object for each file
 
       foreach ($dir_scan as $key => $value) {
-
         $files[] = new directory_entry($value, $extensions);
+      }
+
+      // print_r($files);
+
+      // this is experimental
+      $show_folders = false;
+
+      if ($show_folders) {
+        foreach ($files as $file) {
+          if (!$file->folder) continue;
+          if ($file->name == "..") continue;
+          if ($file->name == ".") continue;
+
+          echo "<div class='folder'>\n  <a href='", $file->name, "'> ";
+
+          echo $file->folder_image();
+
+          // output title for main view
+          if ($show_file_names) {
+            echo "  <p class='caption'>".$file->title()."</p>\n";
+          }
+          echo "</a></div>\n\n";
+
+        }
 
       }
-      // print_r($files);
 
 
       // loop through scanned files
 
       foreach ($files as $file) {
-        if ($file->image) {
+        if (!$file->image) continue;
+        // if (!$file->image && !$file->folder) continue;
+        // if ($file->folder && !$show_folders) continue;
 
-          echo "<div class='border'>\n  <a href='", $file->name, "' data-lightbox='image' ";
 
-          // output title for Lightbox2
-          if ($show_file_names) {
-            if ($convert_filenames) {
-              echo "title='".remove_gunk($file->name)."'";
-            } else {
-              echo "title='".$file->name."'";
-            }
-          }
+        echo "<div class='border'>\n  <a href='", $file->name, "' data-lightbox='image' ";
 
-          echo ">\n    <img class='thumbnail' src='", $file->name, "' />\n  </a>\n";
-
-          // output title for main view
-          if ($show_file_names) {
-            if ($convert_filenames) {
-              echo "  <p class='caption'>".remove_gunk($file->name)."</p>\n";
-            } else {
-              echo "  <p class='caption'>".$file->name."</p>\n";
-            }
-          }
-          echo "</div>\n\n";
+        // output title for Lightbox2
+        if ($show_file_names) {
+          echo "title='".$file->title()."'";
         }
+
+        echo ">\n    <img class='thumbnail' src='", $file->name, "' />\n  </a>\n";
+
+        // output title for main view
+        if ($show_file_names) {
+          echo "  <p class='caption'>".$file->title()."</p>\n";
+        }
+        echo "</div>\n\n";
       }
 
     ?>
@@ -262,6 +307,7 @@
     $('#size-adjust').on("chnage mousemove", function() {
       $('.thumbnail').css("width", $(this).val());
       $('.caption').css("width", $(this).val());
+      $('.folder a').css("width", $(this).val());
     });
 
     lightbox.option({
